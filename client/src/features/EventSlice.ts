@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import axios from 'axios';
+import type { CartItem } from './CartSlice';
 
 export interface Ticket {
   type: string;
@@ -49,6 +50,25 @@ const eventSlice = createSlice({
         setSearchTerm: (state, action: PayloadAction<string>) => {
             state.searchTerm = action.payload; // Update search term in state
         },  
+        purchaseTickets: (state, action: PayloadAction<CartItem[]>) => {
+      const purchasedItems = action.payload;
+
+      purchasedItems.forEach(cartItem => {
+        // Find the event in the state that matches the purchased item's eventId
+        const eventToUpdate = state.events.find(event => event.id === cartItem.eventId);
+
+        if (eventToUpdate) {
+          // Find the specific ticket type within that event
+          const ticketToUpdate = eventToUpdate.tickets.find(ticket => ticket.type === cartItem.ticketType);
+
+          if (ticketToUpdate) {
+            // Decrement the available tickets by the quantity purchased
+            ticketToUpdate.ticketsAvailable -= cartItem.quantity;
+          }
+        }
+      });
+    },
+  
     },
     extraReducers: (builder) => {
         builder
@@ -67,7 +87,7 @@ const eventSlice = createSlice({
             
     },
 });
-export const { setSearchTerm } = eventSlice.actions;
+export const { setSearchTerm, purchaseTickets } = eventSlice.actions;
 
 export const selectEvents = (state: RootState) => state.events.events;
 export const selectSearchTerm = (state: RootState) => state.events.searchTerm;

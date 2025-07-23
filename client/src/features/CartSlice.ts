@@ -1,10 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice,type PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
-import type { Event, Ticket } from './EventSlice'; // Make sure to import both types
+import type { Event, Ticket } from './EventSlice';
 
-// 1. NEW: Define the structure for an item in the cart.
-// It includes event details and the specific ticket chosen.
 export interface CartItem {
   eventId: number;
   eventName: string;
@@ -13,71 +10,72 @@ export interface CartItem {
   quantity: number;
 }
 
-// The initial state is an empty array of these cart items.
 const initialState: CartItem[] = [];
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    // 2. UPDATED: `addToCart` now accepts a payload with both the event and the ticket.
-    addToCart: (state, action: PayloadAction<{ event: Event; ticket: Ticket }>) => {
-      const { event, ticket } = action.payload;
+    // --- KEY CHANGE: The payload now includes 'quantity' ---
+    addToCart: (state, action: PayloadAction<{ event: Event; ticket: Ticket; quantity: number }>) => {
+      const { event, ticket, quantity } = action.payload;
+
+      // Prevent adding if quantity is zero or less
+      if (quantity <= 0) {
+        return; 
+      }
+
       const existingItem = state.find(
         (item) => item.eventId === event.id && item.ticketType === ticket.type
       );
 
       if (existingItem) {
-        // If this specific ticket is already in the cart, just increase the quantity.
-        existingItem.quantity += 1;
+        // If the item already exists, add the new quantity to the old one
+        existingItem.quantity += quantity;
       } else {
-        // Otherwise, add a new CartItem to the state.
+        // Otherwise, add a new item with the specified quantity
         state.push({
           eventId: event.id,
           eventName: event.name,
           ticketType: ticket.type,
           price: ticket.price,
-          quantity: 1,
+          quantity: quantity, // Use the quantity from the payload
         });
       }
     },
-    // 3. UPDATED: `removeFromCart` now needs to know which specific ticket to remove.
-    removeFromCart: (state, action: PayloadAction<{ eventId: number; ticketType: string }>) => {
-      const { eventId, ticketType } = action.payload;
-      const existingItemIndex = state.findIndex(
-        (item) => item.eventId === eventId && item.ticketType === ticketType
-      );
+     incrementQuantity: (state, action: PayloadAction<{ eventId: number; ticketType: string }>) => {
+      const item = state.find(i => i.eventId === action.payload.eventId && i.ticketType === action.payload.ticketType);
+      if (item) {
+        item.quantity++;
+      }
+    },
 
-      if (existingItemIndex !== -1) {
-        const existingItem = state[existingItemIndex];
-        if (existingItem.quantity > 1) {
-          // If quantity is more than 1, just decrease it.
-          existingItem.quantity -= 1;
+    // 2. NEW: Reducer to specifically decrease quantity
+    decrementQuantity: (state, action: PayloadAction<{ eventId: number; ticketType: string }>) => {
+      const itemIndex = state.findIndex(i => i.eventId === action.payload.eventId && i.ticketType === action.payload.ticketType);
+      if (itemIndex !== -1) {
+        const item = state[itemIndex];
+        if (item.quantity > 1) {
+          item.quantity--;
         } else {
-          // If quantity is 1, remove the item from the array entirely.
-          state.splice(existingItemIndex, 1);
+          // If quantity is 1, remove the item completely
+          state.splice(itemIndex, 1);
         }
       }
     },
-    // clearCart remains the same.
+    // The rest of your slice remains the same
+    removeItem: (state, action: PayloadAction<{ eventId: number; ticketType: string }>) => {
+      const { eventId, ticketType } = action.payload;
+      // Return a new array containing all items EXCEPT the one that matches.
+      return state.filter(item => !(item.eventId === eventId && item.ticketType === ticketType));
+    },
     clearCart: () => [],
   },
 });
 
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
-
-// The selector for the entire cart state.
+export const { addToCart, removeItem, clearCart, incrementQuantity, decrementQuantity } = cartSlice.actions;
 export const selectCart = (state: RootState) => state.cart;
-
-// 4. UPDATED: Selectors now work with the new CartItem structure.
-export const amountInCart = (state: RootState) => {
-  // Sums up the `quantity` of all items in the cart.
-  return state.cart.reduce((total, item) => total + item.quantity, 0);
-};
-
-export const selectTotalPrice = (state: RootState) => {
-  // Calculates the total price by multiplying each item's price by its quantity.
-  return state.cart.reduce((total, item) => total + item.price * item.quantity, 0);
-};
+export const amountInCart = (state: RootState) => state.cart.reduce((total, item) => total + item.quantity, 0);
+export const selectTotalPrice = (state: RootState) => state.cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
 export default cartSlice.reducer;

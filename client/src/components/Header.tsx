@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaHome, FaSearch, FaUser } from 'react-icons/fa';
+import {  FaSearch, FaUser } from 'react-icons/fa';
 import CartIcon from './CartIcon';
 import { useAppDispatch, useAppSelector } from '../features/store.hooks';
 import { setSearchTerm, selectSearchTerm } from '../features/EventSlice';
-
+import rpLogoUrl from '../assets/rp-logo.svg';
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const searchTerm = useAppSelector(selectSearchTerm);
@@ -25,7 +25,7 @@ const Header: React.FC = () => {
       {/* Left-side navigation */}
       <nav className="flex gap-4 items-center">
         <Link to="/" className="flex items-center gap-1 hover:text-blue-500 transition-colors">
-          <FaHome /> Home
+          <img src={rpLogoUrl} alt="RP Logo" className="h-12 w-12" />
         </Link>
         <Link to="/profile" className="flex items-center gap-1 hover:text-blue-500 transition-colors">
           <FaUser /> Profile
