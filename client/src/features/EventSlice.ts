@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import axios from 'axios';
 
@@ -24,11 +24,13 @@ interface EventState {
     events: Event[];    
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
+    searchTerm: string; // Added search term state
 }
 
 const initialState: EventState = {
     events: [], // Make sure this is always an array, not null
     status: 'idle',
+    searchTerm: '', // Initialize search term
     error: null,
 };
 
@@ -43,7 +45,11 @@ export const fetchEvents = createAsyncThunk(
 const eventSlice = createSlice({
     name: 'events',
     initialState,
-    reducers: {},
+    reducers: {
+        setSearchTerm: (state, action: PayloadAction<string>) => {
+            state.searchTerm = action.payload; // Update search term in state
+        },  
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchEvents.pending, (state) => {
@@ -58,9 +64,12 @@ const eventSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message || 'Failed to fetch events';
             });
+            
     },
 });
+export const { setSearchTerm } = eventSlice.actions;
 
 export const selectEvents = (state: RootState) => state.events.events;
+export const selectSearchTerm = (state: RootState) => state.events.searchTerm;
 
 export default eventSlice.reducer;
