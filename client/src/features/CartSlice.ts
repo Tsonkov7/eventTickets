@@ -16,7 +16,7 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    // --- KEY CHANGE: The payload now includes 'quantity' ---
+    // The payload now includes 'quantity' ---
     addToCart: (state, action: PayloadAction<{ event: Event; ticket: Ticket; quantity: number }>) => {
       const { event, ticket, quantity } = action.payload;
 
@@ -50,7 +50,7 @@ const cartSlice = createSlice({
       }
     },
 
-    // 2. NEW: Reducer to specifically decrease quantity
+    //  Reducer to specifically decrease quantity
     decrementQuantity: (state, action: PayloadAction<{ eventId: number; ticketType: string }>) => {
       const itemIndex = state.findIndex(i => i.eventId === action.payload.eventId && i.ticketType === action.payload.ticketType);
       if (itemIndex !== -1) {
