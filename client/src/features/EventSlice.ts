@@ -16,7 +16,6 @@ export interface Event {
   date: string;
   venue: string;
   lineup: string[];
-  // CHANGED: price and ticketsAvailable are replaced by the tickets array
   tickets: Ticket[];
   imageUrl: string;
   description: string;
