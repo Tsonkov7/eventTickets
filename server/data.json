@@ -15,7 +15,11 @@
         "type": "VIP",
         "price": 150,
         "ticketsAvailable": 500,
-        "perks": ["Access to VIP lounge", "Dedicated entrance", "Premium viewing areas"]
+        "perks": [
+          "Access to VIP lounge",
+          "Dedicated entrance",
+          "Premium viewing areas"
+        ]
       }
     ],
     "imageUrl": "/images/kappa-futur.jpg",
@@ -37,7 +41,11 @@
         "type": "VIP",
         "price": 120,
         "ticketsAvailable": 750,
-        "perks": ["Fast-track entry", "Access to VIP village", "Private bars & toilets"]
+        "perks": [
+          "Fast-track entry",
+          "Access to VIP village",
+          "Private bars & toilets"
+        ]
       }
     ],
     "imageUrl": "/images/elrow-town.jpg",
@@ -48,7 +56,12 @@
     "name": "Sunwaves Festival",
     "date": "2025-05-01T22:00:00",
     "venue": "Mamaia Nord, Constanța, Romania",
-    "lineup": ["Marco Carola", "Richie Hawtin", "Ricardo Villalobos", "Loco Dice"],
+    "lineup": [
+      "Marco Carola",
+      "Richie Hawtin",
+      "Ricardo Villalobos",
+      "Loco Dice"
+    ],
     "tickets": [
       {
         "type": "General Admission",
@@ -59,7 +72,11 @@
         "type": "VIP",
         "price": 130,
         "ticketsAvailable": 400,
-        "perks": ["Access to all stages", "Elevated platform views", "VIP bar service"]
+        "perks": [
+          "Access to all stages",
+          "Elevated platform views",
+          "VIP bar service"
+        ]
       }
     ],
     "imageUrl": "/images/sunwaves-festival.jpg",
@@ -69,7 +86,7 @@
     "id": 4,
     "name": "EXE Beach Festival",
     "date": "2025-07-26T16:00:00",
-    "venue": "The Castle of Kavala, Greece",
+    "venue": "Cacao Beach, Sunny Beach, Bulgaria",
     "lineup": ["I Hate Models", "Regal", "Deborah De Luca", "999999999"],
     "tickets": [
       {
@@ -81,7 +98,11 @@
         "type": "VIP",
         "price": 100,
         "ticketsAvailable": 200,
-        "perks": ["Exclusive area access", "Complimentary drink", "Meet & greet lottery"]
+        "perks": [
+          "Exclusive area access",
+          "Complimentary drink",
+          "Meet & greet lottery"
+        ]
       }
     ],
     "imageUrl": "/images/exe-beach.jpg",
