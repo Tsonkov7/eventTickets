@@ -1,8 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import CheckOut from './pages/CheckOut';
-import React from 'react';
-import './App.css'; // Assuming you have some global styles
 import EventDetailsPage from './pages/EventDetailPage';
 
 export default function App() {

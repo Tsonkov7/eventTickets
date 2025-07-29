@@ -1,7 +1,7 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { amountInCart } from '../features/CartSlice';
-import { FaShoppingCart } from 'react-icons/fa'; // optional, use any cart icon
+import React from "react";
+import { useSelector } from "react-redux";
+import { amountInCart } from "../features/CartSlice";
+import { FaShoppingCart } from "react-icons/fa";
 
 const CartIcon: React.FC = () => {
   const totalItems = useSelector(amountInCart);

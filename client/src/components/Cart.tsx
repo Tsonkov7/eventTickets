@@ -1,18 +1,17 @@
-import React from 'react';
-import { FaTrash } from 'react-icons/fa'; // A trash icon is great for the remove button
-import { useAppSelector, useAppDispatch } from '../features/store.hooks';
+import React from "react";
+import { FaTrash } from "react-icons/fa";
+import { useAppSelector, useAppDispatch } from "../features/store.hooks";
 import {
   selectCart,
   selectTotalPrice,
-  incrementQuantity, // Import new actions
+  incrementQuantity,
   decrementQuantity,
   removeItem,
-  clearCart
-   
-} from '../features/CartSlice';
-import type { CartItem } from '../features/CartSlice';
-import { purchaseTickets } from '../features/EventSlice';
-import { useNavigate } from 'react-router-dom';
+  clearCart,
+} from "../features/CartSlice";
+import type { CartItem } from "../features/CartSlice";
+import { purchaseTickets } from "../features/EventSlice";
+import { useNavigate } from "react-router-dom";
 
 const Cart: React.FC = () => {
   const cartItems = useAppSelector(selectCart);
@@ -20,39 +19,47 @@ const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-
-  // Handlers to dispatch the new actions
   const handleIncrement = (item: CartItem) => {
-    dispatch(incrementQuantity({ eventId: item.eventId, ticketType: item.ticketType }));
+    dispatch(
+      incrementQuantity({ eventId: item.eventId, ticketType: item.ticketType })
+    );
   };
 
   const handleDecrement = (item: CartItem) => {
-    dispatch(decrementQuantity({ eventId: item.eventId, ticketType: item.ticketType }));
+    dispatch(
+      decrementQuantity({ eventId: item.eventId, ticketType: item.ticketType })
+    );
   };
-  
-const handleRemove = (item: CartItem) => {
-    if(window.confirm(`Are you sure you want to remove all ${item.ticketType} tickets for ${item.eventName}?`)) {
-        dispatch(removeItem({ eventId: item.eventId, ticketType: item.ticketType }));
-    }
-};
 
- const handlePurchase = () => {
-    // Basic validation
+  const handleRemove = (item: CartItem) => {
+    if (
+      window.confirm(
+        `Are you sure you want to remove all ${item.ticketType} tickets for ${item.eventName}?`
+      )
+    ) {
+      dispatch(
+        removeItem({ eventId: item.eventId, ticketType: item.ticketType })
+      );
+    }
+  };
+
+  const handlePurchase = () => {
     if (cartItems.length === 0) {
       alert("Your cart is empty!");
       return;
     }
 
-    if(window.confirm(`You are about to purchase tickets for a total of $${totalPrice.toFixed(2)}. Proceed?`)) {
-      // Step 1: Dispatch the action to decrement ticket counts
+    if (
+      window.confirm(
+        `You are about to purchase tickets for a total of $${totalPrice.toFixed(2)}. Proceed?`
+      )
+    ) {
       dispatch(purchaseTickets(cartItems));
 
-      // Step 2: Dispatch the action to clear the cart
       dispatch(clearCart());
 
-      // Step 3: Provide feedback and navigate the user
       alert("Purchase successful! Thank you for buying tickets.");
-      navigate('/'); // Navigate to the home page (or a success page)
+      navigate("/");
     }
   };
 
@@ -70,17 +77,23 @@ const handleRemove = (item: CartItem) => {
       ) : (
         <>
           <ul className="divide-y divide-gray-200">
-            {cartItems.map(item => (
-              <li key={`${item.eventId}-${item.ticketType}`} className="flex flex-col sm:flex-row items-center justify-between py-4">
-                
+            {cartItems.map((item) => (
+              <li
+                key={`${item.eventId}-${item.ticketType}`}
+                className="flex flex-col sm:flex-row items-center justify-between py-4"
+              >
                 {/* Item Details */}
                 <div className="flex-1 mb-4 sm:mb-0">
-                  <p className="font-semibold text-lg text-gray-900">{item.eventName}</p>
+                  <p className="font-semibold text-lg text-gray-900">
+                    {item.eventName}
+                  </p>
                   <p className="text-sm text-gray-600">{item.ticketType}</p>
-                  <p className="text-sm font-bold text-blue-500">${item.price.toFixed(2)} each</p>
+                  <p className="text-sm font-bold text-blue-500">
+                    ${item.price.toFixed(2)} each
+                  </p>
                 </div>
 
-                {/* --- KEY CHANGE: Interactive Counter --- */}
+                {/* Counter */}
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center border rounded-lg">
                     <button
@@ -90,7 +103,10 @@ const handleRemove = (item: CartItem) => {
                     >
                       -
                     </button>
-                    <span className="px-5 py-1 font-semibold text-gray-800" aria-live="polite">
+                    <span
+                      className="px-5 py-1 font-semibold text-gray-800"
+                      aria-live="polite"
+                    >
                       {item.quantity}
                     </span>
                     <button
@@ -109,7 +125,6 @@ const handleRemove = (item: CartItem) => {
                     <FaTrash />
                   </button>
                 </div>
-
               </li>
             ))}
           </ul>
