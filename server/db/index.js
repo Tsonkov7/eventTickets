@@ -1,0 +1,3 @@
+/*
+    Here you can define the database connection and the methods to interact with the database
+*/

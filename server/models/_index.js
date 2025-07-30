@@ -1,0 +1,3 @@
+/*
+    Here you can define the models for the database if not using a ORM like Prisma
+*/

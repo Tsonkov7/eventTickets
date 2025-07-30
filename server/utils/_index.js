@@ -1,0 +1,3 @@
+/*
+    Utils are functions that are used throughout the project to perform common tasks
+*/
