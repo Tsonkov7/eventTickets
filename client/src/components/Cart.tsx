@@ -12,6 +12,7 @@ import {
 import type { CartItem } from "../features/CartSlice";
 import { purchaseTickets } from "../features/EventSlice";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Cart: React.FC = () => {
   const cartItems = useAppSelector(selectCart);
@@ -64,86 +65,140 @@ const Cart: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
-      <div className="flex justify-between items-center border-b pb-4 mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Shopping Cart</h2>
-        <h5 className="text-xl font-semibold text-gray-700">
-          Total: <span className="text-blue-600">${totalPrice.toFixed(2)}</span>
-        </h5>
-      </div>
-
-      {cartItems.length === 0 ? (
-        <p className="text-gray-500 text-center py-8">Your cart is empty.</p>
-      ) : (
-        <>
-          <ul className="divide-y divide-gray-200">
-            {cartItems.map((item) => (
-              <li
-                key={`${item.eventId}-${item.ticketType}`}
-                className="flex flex-col sm:flex-row items-center justify-between py-4"
-              >
-                {/* Item Details */}
-                <div className="flex-1 mb-4 sm:mb-0">
-                  <p className="font-semibold text-lg text-gray-900">
-                    {item.eventName}
-                  </p>
-                  <p className="text-sm text-gray-600">{item.ticketType}</p>
-                  <p className="text-sm font-bold text-blue-500">
-                    ${item.price.toFixed(2)} each
-                  </p>
-                </div>
-
-                {/* Counter */}
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center border rounded-lg">
-                    <button
-                      onClick={() => handleDecrement(item)}
-                      className="px-3 py-1 font-bold text-lg text-gray-700 hover:bg-gray-200 rounded-l-lg"
-                      aria-label="Decrease quantity"
-                    >
-                      -
-                    </button>
-                    <span
-                      className="px-5 py-1 font-semibold text-gray-800"
-                      aria-live="polite"
-                    >
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => handleIncrement(item)}
-                      className="px-3 py-1 font-bold text-lg text-gray-700 hover:bg-gray-200 rounded-r-lg"
-                      aria-label="Increase quantity"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => handleRemove(item)}
-                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full transition-colors"
-                    aria-label={`Remove all ${item.ticketType} tickets for ${item.eventName}`}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div className="flex justify-end mt-6">
-            <button
-              onClick={() => dispatch(clearCart())}
-              className="px-6 py-2 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-800 transition"
-            >
-              Clear Cart
-            </button>
-            <button
-              onClick={handlePurchase}
-              className="ml-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
-            >
-              Purchase Tickets
-            </button>
+    <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg mt-10">
+      <div className="p-6 sm:p-8">
+        {/* --- Header --- */}
+        <div className="flex justify-between items-baseline border-b border-gray-200 pb-4 mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+            Shopping Cart
+          </h2>
+          <div className="text-right">
+            <span className="text-sm text-gray-500">Total</span>
+            <p className="text-2xl sm:text-3xl font-bold text-blue-600">
+              ${totalPrice.toFixed(2)}
+            </p>
           </div>
-        </>
-      )}
+        </div>
+
+        {/* --- Conditional Cart Content --- */}
+        {cartItems.length === 0 ? (
+          <div className="text-center py-12">
+            {/* Replace with an actual SVG icon for a nicer look */}
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                vectorEffect="non-scaling-stroke"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+            <h3 className="mt-2 text-lg font-medium text-gray-900">
+              Your cart is empty
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Browse events and add tickets to get started.
+            </p>
+            <div className="mt-6">
+              <Link
+                to="/"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Find Events
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            <ul role="list" className="divide-y divide-gray-200">
+              {cartItems.map((item) => (
+                <li
+                  key={`${item.eventId}-${item.ticketType}`}
+                  className="flex py-6"
+                >
+                  {/* --- Item Image --- */}
+                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border bg-gray-50">
+                    <img
+                      src={item.imageUrl} // Assumes you have an image URL
+                      alt={item.eventName}
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </div>
+
+                  <div className="ml-4 flex flex-1 flex-col">
+                    <div>
+                      <div className="flex justify-between text-base font-medium text-gray-900">
+                        <h3>{item.eventName}</h3>
+                        <p className="ml-4 font-semibold">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {item.ticketType}
+                      </p>
+                    </div>
+                    <div className="flex flex-1 items-end justify-between text-sm mt-4">
+                      {/* --- Counter --- */}
+                      <div className="flex items-center border rounded-md">
+                        <button
+                          onClick={() => handleDecrement(item)}
+                          className="px-2 py-1 font-mono text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-l-md"
+                        >
+                          -
+                        </button>
+                        <span className="px-4 text-center font-semibold">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => handleIncrement(item)}
+                          className="px-2 py-1 font-mono text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-r-md"
+                        >
+                          +
+                        </button>
+                      </div>
+                      {/* --- Remove Button --- */}
+                      <div className="flex">
+                        <button
+                          onClick={() => handleRemove(item)}
+                          type="button"
+                          className="font-medium text-red-600 hover:text-red-500 flex items-center gap-1"
+                        >
+                          <FaTrash />
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {/* --- Footer Actions --- */}
+            <div className="border-t border-gray-200 pt-6 mt-6">
+              <button
+                onClick={handlePurchase}
+                className="w-full bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition py-3"
+              >
+                Proceed to Checkout
+              </button>
+              <div className="mt-4 flex justify-center text-center text-sm">
+                <button
+                  onClick={() => dispatch(clearCart())}
+                  className="font-medium text-gray-500 hover:text-red-600 transition-colors"
+                >
+                  Clear Entire Cart
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

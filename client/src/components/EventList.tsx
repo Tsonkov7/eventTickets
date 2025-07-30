@@ -44,8 +44,8 @@ const EventList: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-6 text-white border-b pb-2">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-white border-b pb-2">
         Upcoming Events
       </h2>
 
@@ -63,43 +63,43 @@ const EventList: React.FC = () => {
             return (
               <Link
                 to={`/events/${event.id}`}
-                className="no-underline"
+                className="no-underline group"
                 key={event.id}
               >
-                <div className="flex items-start justify-between p-5 mb-4 bg-white rounded-lg shadow-md hover:shadow-xl hover:bg-gray-50 transition-all duration-300">
+                <div className="relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+                  <div className="absolute top-0 right-0 mt-4 mr-4 bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded-full z-10">
+                    From ${startingPrice.toFixed(2)}
+                  </div>
                   <img
                     src={event.imageUrl}
                     alt={event.name}
-                    className="w-32 h-32 object-cover rounded-md mr-5"
+                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" // Zoom effect on hover
                   />
-                  <div className="flex-grow">
-                    <h3 className="font-bold text-xl text-gray-900">
+                  <div className="p-5">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
                       {event.name}
                     </h3>
-                    <div className="text-md text-gray-600 mb-2">
-                      {new Date(event.date).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}{" "}
-                      at {event.venue}
+                    <div className="text-md text-gray-700 mb-3">
+                      <span className="font-medium">
+                        {new Date(event.date).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </span>
+                      <span className="text-gray-500"> at {event.venue}</span>
                     </div>
-                    <p className="text-sm text-gray-500 mb-3">
-                      {truncate(event.description, 100)}
+                    <p className="text-sm text-gray-600 mb-4">
+                      {truncate(event.description, 90)}
                     </p>
-                    <div className="text-sm text-green-600 font-semibold">
-                      Tickets Available: {totalTicketsAvailable}
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                      <span className="text-xs font-semibold text-green-700">
+                        {totalTicketsAvailable} Tickets Left
+                      </span>
+                      <span className="inline-block px-4 py-2 text-sm font-semibold text-white bg-blue-500 group-hover:bg-blue-700 rounded-lg transition-colors duration-300">
+                        View Details
+                      </span>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm text-gray-500">Starts from</span>
-                    <div className="font-extrabold text-2xl text-blue-600">
-                      ${startingPrice.toFixed(2)}
-                    </div>
-                    <span className="mt-4 inline-block px-4 py-2 text-sm font-semibold text-white bg-blue-500 rounded-md">
-                      View Details
-                    </span>
                   </div>
                 </div>
               </Link>
@@ -108,10 +108,10 @@ const EventList: React.FC = () => {
         </div>
       ) : (
         <div className="text-center py-10">
-          <h3 className="text-2xl font-semibold text-gray-700">
+          <h3 className="text-xl sm:text-2xl font-semibold text-gray-700">
             No Events Found
           </h3>
-          <p className="text-gray-500 mt-2">
+          <p className="text-gray-500 mt-2 text-sm sm:text-base">
             We couldn't find any events matching "{searchTerm}". Try a different
             search.
           </p>

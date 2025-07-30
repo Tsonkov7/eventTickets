@@ -8,6 +8,7 @@ export interface CartItem {
   ticketType: string;
   price: number;
   quantity: number;
+  imageUrl?: string;
 }
 
 const initialState: CartItem[] = [];
@@ -18,9 +19,14 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (
       state,
-      action: PayloadAction<{ event: Event; ticket: Ticket; quantity: number }>
+      action: PayloadAction<{
+        event: Event;
+        ticket: Ticket;
+        quantity: number;
+        imageUrl?: string;
+      }>
     ) => {
-      const { event, ticket, quantity } = action.payload;
+      const { event, ticket, quantity, imageUrl } = action.payload;
 
       // Prevents adding if quantity is zero or less
       if (quantity <= 0) {
@@ -40,6 +46,7 @@ const cartSlice = createSlice({
           ticketType: ticket.type,
           price: ticket.price,
           quantity: quantity,
+          imageUrl: imageUrl,
         });
       }
     },
