@@ -1,184 +1,199 @@
-import React, { useState } from "react"; // Import useState
+import React, { useState, useMemo, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { selectEvents } from "../features/EventSlice";
 import { useAppSelector, useAppDispatch } from "../features/store.hooks";
 import { addToCart } from "../features/CartSlice";
 import type { Ticket } from "../features/EventSlice";
 import Header from "../components/Header";
+import TicketCard from "../components/TicketCard";
+import ToastContainer from "../components/ToastContainer";
+import { useToast } from "../hooks/useToast";
+
+const DEFAULT_QUANTITY = 1;
+const MIN_QUANTITY = 1;
+
+interface QuantityState {
+  [ticketType: string]: number;
+}
 
 const EventDetailsPage: React.FC = () => {
-  const { eventId } = useParams();
+  const { eventId } = useParams<{ eventId: string }>();
   const dispatch = useAppDispatch();
   const events = useAppSelector(selectEvents);
-  const event = events.find((e) => e.id === Number(eventId));
+  const { toasts, addToast, removeToast } = useToast();
 
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [quantities, setQuantities] = useState<QuantityState>({});
 
-  const handleQuantityChange = (
-    ticketType: string,
-    amount: number,
-    maxTickets: number
-  ) => {
-    setQuantities((prev) => {
-      const currentQuantity = prev[ticketType] || 1;
-      let newQuantity = currentQuantity + amount;
+  // Memoized event lookup with proper error handling
+  const event = useMemo(() => {
+    if (!eventId || !events.length) return null;
 
-      if (newQuantity < 1) newQuantity = 1;
-      if (newQuantity > maxTickets) newQuantity = maxTickets;
+    const parsedEventId = parseInt(eventId, 10);
+    if (isNaN(parsedEventId)) return null;
 
-      return { ...prev, [ticketType]: newQuantity };
-    });
-  };
+    return events.find((e) => e.id === parsedEventId) || null;
+  }, [eventId, events]);
 
-  const addToCartHandler = (ticket: Ticket) => {
-    if (event) {
-      const quantityToAdd = quantities[ticket.type] || 1;
-      dispatch(
-        addToCart({
-          event,
-          ticket,
-          quantity: quantityToAdd,
-          imageUrl: event.imageUrl,
-        })
-      );
-      alert(`${quantityToAdd} x ${ticket.type} ticket(s) added to your cart.`);
-    }
-  };
+  const handleQuantityChange = useCallback(
+    (ticketType: string, amount: number, maxTickets: number) => {
+      setQuantities((prev) => {
+        const currentQuantity = prev[ticketType] || DEFAULT_QUANTITY;
+        const newQuantity = Math.max(
+          MIN_QUANTITY,
+          Math.min(maxTickets, currentQuantity + amount)
+        );
+
+        return { ...prev, [ticketType]: newQuantity };
+      });
+    },
+    []
+  );
+
+  const handleAddToCart = useCallback(
+    (ticket: Ticket) => {
+      if (!event) {
+        addToast("Event not found. Please try again.", "error");
+        return;
+      }
+
+      const quantityToAdd = quantities[ticket.type] || DEFAULT_QUANTITY;
+
+      if (quantityToAdd <= 0) {
+        addToast("Invalid quantity selected.", "error");
+        return;
+      }
+
+      if (quantityToAdd > ticket.ticketsAvailable) {
+        addToast(
+          `Only ${ticket.ticketsAvailable} tickets available for ${ticket.type}.`,
+          "warning"
+        );
+        return;
+      }
+
+      try {
+        dispatch(
+          addToCart({
+            event,
+            ticket,
+            quantity: quantityToAdd,
+            imageUrl: event.imageUrl,
+          })
+        );
+        addToast(
+          `${quantityToAdd} × ${ticket.type} ticket${quantityToAdd > 1 ? "s" : ""} added to your cart!`,
+          "success"
+        );
+      } catch {
+        addToast("Failed to add tickets to cart. Please try again.", "error");
+      }
+    },
+    [event, quantities, dispatch, addToast]
+  );
+
+  const createQuantityChangeHandler = useCallback(
+    (ticket: Ticket) => {
+      return (amount: number) =>
+        handleQuantityChange(ticket.type, amount, ticket.ticketsAvailable);
+    },
+    [handleQuantityChange]
+  );
+
+  const createAddToCartHandler = useCallback(
+    (ticket: Ticket) => {
+      return () => handleAddToCart(ticket);
+    },
+    [handleAddToCart]
+  );
+
+  if (!events.length) {
+    return (
+      <>
+        <Header />
+        <div className="mt-8 p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-300 rounded mb-4"></div>
+            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (!event) {
-    return <div>Event not found</div>;
+    return (
+      <>
+        <Header />
+        <div className="mt-8 p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Event Not Found
+          </h1>
+          <p className="text-gray-600 mb-6">
+            The event you're looking for doesn't exist or may have been removed.
+          </p>
+          <Link
+            to="/"
+            className="inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Back to Events
+          </Link>
+        </div>
+      </>
+    );
   }
 
   return (
     <>
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* --- Main Content Grid --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
-          {/* Left Column: Image & Details */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden p-6 sm:p-8">
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 mb-4">
-                {event.name}
-              </h1>
-              <img
-                src={event.imageUrl}
-                alt={event.name}
-                className="w-full h-auto object-cover rounded-lg mb-6 shadow-sm"
-              />
-              {/* Using Tailwind's Typography plugin for beautiful text styling */}
-              <div className="prose prose-lg max-w-none text-gray-700">
-                <p>{event.description}</p>
-              </div>
-            </div>{" "}
-            <div className="mb-6">
-              <Link
-                to="/"
-                className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                ← Back to all events
-              </Link>
-            </div>
+      <main className="mt-8 p-8 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
+        <header className="mb-8">
+          <h1 className="text-4xl font-extrabold mb-3 text-gray-900">
+            {event.name}
+          </h1>
+          <div className="text-sm text-gray-600 mb-4 space-y-1">
+            <p>
+              <strong>Date:</strong> {event.date}
+            </p>
+            <p>
+              <strong>Venue:</strong> {event.venue}
+            </p>
+            {event.lineup && event.lineup.length > 0 && (
+              <p>
+                <strong>Lineup:</strong> {event.lineup.join(", ")}
+              </p>
+            )}
           </div>
+          <p className="text-gray-700 leading-relaxed">{event.description}</p>
+        </header>
 
-          {/* Right Column (Sticky): Ticket Selection */}
-          <div className="lg:col-span-1 mt-8 lg:mt-0">
-            <div className="lg:sticky lg:top-8 bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-4 mb-5">
-                Select Tickets
-              </h2>
-              <div className="space-y-4">
-                {event.tickets.map((ticket) => {
-                  const currentQuantity = quantities[ticket.type] || 1;
-                  const isSoldOut = ticket.ticketsAvailable === 0;
+        <section className="space-y-4">
+          <h2 className="text-2xl font-bold border-b pb-2 mb-4">
+            Select Your Tickets
+          </h2>
+          {event.tickets.map((ticket) => (
+            <TicketCard
+              key={ticket.type}
+              ticket={ticket}
+              quantity={quantities[ticket.type] || DEFAULT_QUANTITY}
+              onQuantityChange={createQuantityChangeHandler(ticket)}
+              onAddToCart={createAddToCartHandler(ticket)}
+            />
+          ))}
+        </section>
 
-                  return (
-                    <div
-                      key={ticket.type}
-                      className={`border rounded-lg transition-all duration-300 ${isSoldOut ? "bg-gray-100 opacity-70" : "bg-white hover:border-blue-500 hover:shadow-sm"}`}
-                    >
-                      <div className="p-4">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-grow mr-4">
-                            <h3 className="text-lg font-semibold text-gray-800">
-                              {ticket.type}
-                            </h3>
-                            <p
-                              className={`text-sm ${isSoldOut ? "text-red-600 font-bold" : "text-gray-500"}`}
-                            >
-                              {isSoldOut
-                                ? "Sold Out"
-                                : `${ticket.ticketsAvailable} tickets left`}
-                            </p>
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <p className="text-xl font-bold text-blue-600">
-                              ${ticket.price.toFixed(2)}
-                            </p>
-                          </div>
-                        </div>
-                        {ticket.perks && (
-                          <ul className="list-disc list-inside text-xs text-gray-500 mt-2 space-y-1">
-                            {ticket.perks.map((perk) => (
-                              <li key={perk}>{perk}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
+        <nav className="mt-8 text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-2 py-1"
+          >
+            <span aria-hidden="true">←</span>
+            <span className="ml-1">Back to all events</span>
+          </Link>
+        </nav>
+      </main>
 
-                      {!isSoldOut && (
-                        <div className="bg-gray-50 border-t px-4 py-3 flex items-center justify-between">
-                          {/* Quantity Selector */}
-                          <div className="flex items-center border rounded-md bg-white">
-                            <button
-                              onClick={() =>
-                                handleQuantityChange(
-                                  ticket.type,
-                                  -1,
-                                  ticket.ticketsAvailable
-                                )
-                              }
-                              disabled={currentQuantity <= 1}
-                              className="px-3 py-1 font-mono text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-l-md"
-                            >
-                              -
-                            </button>
-                            <span className="px-4 py-1 font-semibold text-base text-gray-800">
-                              {currentQuantity}
-                            </span>
-                            <button
-                              onClick={() =>
-                                handleQuantityChange(
-                                  ticket.type,
-                                  1,
-                                  ticket.ticketsAvailable
-                                )
-                              }
-                              disabled={
-                                currentQuantity >= ticket.ticketsAvailable
-                              }
-                              className="px-3 py-1 font-mono text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-r-md"
-                            >
-                              +
-                            </button>
-                          </div>
-                          {/* Add to Cart Button */}
-                          <button
-                            onClick={() => addToCartHandler(ticket)}
-                            className="py-2 px-5 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm"
-                          >
-                            Add
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
     </>
   );
 };

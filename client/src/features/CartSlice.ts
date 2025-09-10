@@ -23,7 +23,7 @@ const cartSlice = createSlice({
         event: Event;
         ticket: Ticket;
         quantity: number;
-        imageUrl?: string;
+        imageUrl: string;
       }>
     ) => {
       const { event, ticket, quantity, imageUrl } = action.payload;
