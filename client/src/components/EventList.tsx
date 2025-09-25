@@ -62,9 +62,9 @@ const EventList: React.FC = () => {
 
             return (
               <Link
-                to={`/events/${event.id}`}
+                to={`/events/${event._id}`}
                 className="no-underline group"
-                key={event.id}
+                key={event._id}
               >
                 <div className="relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
                   <div className="absolute top-0 right-0 mt-4 mr-4 bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded-full z-10">

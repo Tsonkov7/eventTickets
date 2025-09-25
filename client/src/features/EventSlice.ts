@@ -15,7 +15,7 @@ export interface Ticket {
 }
 
 export interface Event {
-  id: number;
+  _id: string;
   name: string;
   date: string;
   venue: string;
@@ -55,7 +55,7 @@ const eventSlice = createSlice({
 
       purchasedItems.forEach((cartItem) => {
         const eventToUpdate = state.events.find(
-          (event) => event.id === cartItem.eventId
+          (event) => event._id === cartItem.eventId
         );
 
         if (eventToUpdate) {

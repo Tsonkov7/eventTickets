@@ -1,4 +1,0 @@
-/*
-    Here you can define the services for the server
-    Services are functions that are used to interact with the database and peform the business logic
-*/

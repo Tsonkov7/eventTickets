@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap");
 @import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: 'Goldman', 'Orbitron', 'Roboto', 'Segoe UI', Arial, sans-serif;
+  font-family: "Goldman", "Orbitron", "Roboto", "Segoe UI", Arial, sans-serif;
   line-height: 2.5;
   font-weight: 500;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
-  --primary-color: #1eff8f96;
 }

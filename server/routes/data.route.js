@@ -1,17 +1,15 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
-import getDirname from "../utils/getDirname.js";
+import DbService from "../services/db.service.js";
+import { DATABASE_COLLECTIONS } from "../constants.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const dataPath = path.join(getDirname(), "..", "db", process.env.DB_FILE);
-    const data = fs.readFileSync(dataPath, "utf8");
-    res.json(JSON.parse(data));
+    const events = await DbService.getMany(DATABASE_COLLECTIONS.EVENT, {});
+    res.json(events);
   } catch (err) {
-    res.status(500).json({ error: `Could not read ${process.env.DB_FILE}` });
+    res.status(500).json({ error: "Could not fetch events from database" });
   }
 });
 

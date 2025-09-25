@@ -3,7 +3,7 @@ import type { RootState } from "./store";
 import type { Event, Ticket } from "./EventSlice";
 
 export interface CartItem {
-  eventId: number;
+  eventId: string;
   eventName: string;
   ticketType: string;
   price: number;
@@ -34,14 +34,14 @@ const cartSlice = createSlice({
       }
 
       const existingItem = state.find(
-        (item) => item.eventId === event.id && item.ticketType === ticket.type
+        (item) => item.eventId === event._id && item.ticketType === ticket.type
       );
 
       if (existingItem) {
         existingItem.quantity += quantity;
       } else {
         state.push({
-          eventId: event.id,
+          eventId: event._id,
           eventName: event.name,
           ticketType: ticket.type,
           price: ticket.price,
@@ -52,7 +52,7 @@ const cartSlice = createSlice({
     },
     incrementQuantity: (
       state,
-      action: PayloadAction<{ eventId: number; ticketType: string }>
+      action: PayloadAction<{ eventId: string; ticketType: string }>
     ) => {
       const item = state.find(
         (i) =>
@@ -66,7 +66,7 @@ const cartSlice = createSlice({
 
     decrementQuantity: (
       state,
-      action: PayloadAction<{ eventId: number; ticketType: string }>
+      action: PayloadAction<{ eventId: string; ticketType: string }>
     ) => {
       const itemIndex = state.findIndex(
         (i) =>
@@ -84,7 +84,7 @@ const cartSlice = createSlice({
     },
     removeItem: (
       state,
-      action: PayloadAction<{ eventId: number; ticketType: string }>
+      action: PayloadAction<{ eventId: string; ticketType: string }>
     ) => {
       const { eventId, ticketType } = action.payload;
       return state.filter(

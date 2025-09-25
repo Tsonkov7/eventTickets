@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react"; // Import useState
 import { FaTrash } from "react-icons/fa";
 import { useAppSelector, useAppDispatch } from "../features/store.hooks";
 import {
@@ -15,11 +15,29 @@ import { Link } from "react-router-dom";
 import ToastContainer from "./ToastContainer";
 import { useToast } from "../hooks/useToast";
 
+// Shadcn UI Components
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 const Cart: React.FC = () => {
   const cartItems = useAppSelector(selectCart);
   const totalPrice = useAppSelector(selectTotalPrice);
   const dispatch = useAppDispatch();
   const { toasts, addToast, removeToast } = useToast();
+
+  // State for controlling the item removal dialog
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState<CartItem | null>(null);
+
+  // State for controlling the purchase confirmation dialog
+  const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
 
   const handleIncrement = (item: CartItem) => {
     dispatch(
@@ -33,37 +51,43 @@ const Cart: React.FC = () => {
     );
   };
 
-  const handleRemove = (item: CartItem) => {
-    if (
-      window.confirm(
-        `Are you sure you want to remove all ${item.ticketType} tickets for ${item.eventName}?`
-      )
-    ) {
+  // --- Logic for Item Removal Dialog ---
+  const openRemoveDialog = (item: CartItem) => {
+    setItemToRemove(item);
+    setIsRemoveDialogOpen(true);
+  };
+
+  const confirmRemove = () => {
+    if (itemToRemove) {
       dispatch(
-        removeItem({ eventId: item.eventId, ticketType: item.ticketType })
+        removeItem({
+          eventId: itemToRemove.eventId,
+          ticketType: itemToRemove.ticketType,
+        })
       );
       addToast("Item removed from cart.", "info");
+      setItemToRemove(null); // Clear the item after removal
+      setIsRemoveDialogOpen(false); // Close dialog
     }
   };
+  // --- End Item Removal Dialog Logic ---
 
-  const handlePurchase = () => {
+  // --- Logic for Purchase Dialog ---
+  const openPurchaseDialog = () => {
     if (cartItems.length === 0) {
-      alert("Your cart is empty!");
+      addToast("Your cart is empty!", "error"); // Use toast instead of alert
       return;
     }
-
-    if (
-      window.confirm(
-        `You are about to purchase tickets for a total of $${totalPrice.toFixed(2)}. Proceed?`
-      )
-    ) {
-      dispatch(purchaseTickets(cartItems));
-
-      dispatch(clearCart());
-
-      addToast("Purchase successful! Thank you for your order.", "success");
-    }
+    setIsPurchaseDialogOpen(true);
   };
+
+  const confirmPurchase = () => {
+    dispatch(purchaseTickets(cartItems));
+    dispatch(clearCart());
+    addToast("Purchase successful! Thank you for your order.", "success");
+    setIsPurchaseDialogOpen(false); // Close dialog
+  };
+  // --- End Purchase Dialog Logic ---
 
   return (
     <>
@@ -85,7 +109,6 @@ const Cart: React.FC = () => {
           {/* --- Conditional Cart Content --- */}
           {cartItems.length === 0 ? (
             <div className="text-center py-12">
-              {/* Replace with an actual SVG icon for a nicer look */}
               <svg
                 className="mx-auto h-12 w-12 text-gray-400"
                 fill="none"
@@ -164,10 +187,10 @@ const Cart: React.FC = () => {
                             +
                           </button>
                         </div>
-                        {/* --- Remove Button --- */}
+                        {/* --- Remove Button (Now triggers dialog) --- */}
                         <div className="flex">
                           <button
-                            onClick={() => handleRemove(item)}
+                            onClick={() => openRemoveDialog(item)} // Open dialog
                             type="button"
                             className="font-medium text-red-600 hover:text-red-500 flex items-center gap-1"
                           >
@@ -184,7 +207,7 @@ const Cart: React.FC = () => {
               {/* --- Footer Actions --- */}
               <div className="border-t border-gray-200 pt-6 mt-6">
                 <button
-                  onClick={handlePurchase}
+                  onClick={openPurchaseDialog} // Open purchase dialog
                   className="w-full bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition py-3"
                 >
                   Proceed to Checkout
@@ -203,6 +226,69 @@ const Cart: React.FC = () => {
         </div>
       </div>
       <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
+
+      {/* --- Item Removal Confirmation Dialog --- */}
+      <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
+        <DialogContent className="bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+          <DialogHeader className="p-6">
+            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Confirm Removal
+            </DialogTitle>
+            <DialogDescription className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {itemToRemove &&
+                `Are you sure you want to remove all ${itemToRemove.ticketType} tickets for ${itemToRemove.eventName}? This action cannot be undone.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end space-x-2 p-6 bg-gray-50 dark:bg-gray-700 rounded-b-lg">
+            <Button
+              variant="outline"
+              className="px-4 py-2 bg-transparent border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => setIsRemoveDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              onClick={confirmRemove}
+            >
+              Remove
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* --- Purchase Confirmation Dialog --- */}
+      <Dialog
+        open={isPurchaseDialogOpen}
+        onOpenChange={setIsPurchaseDialogOpen}
+      >
+        <DialogContent className="bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+          <DialogHeader className="p-6">
+            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Confirm Purchase
+            </DialogTitle>
+            <DialogDescription className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {`You are about to purchase tickets for a total of $${totalPrice.toFixed(2)}. Proceed with this order?`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end space-x-2 p-6 bg-gray-50 dark:bg-gray-700 rounded-b-lg">
+            <Button
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={confirmPurchase}
+            >
+              Confirm Purchase
+            </Button>
+            <Button
+              variant="outline"
+              className="px-4 py-2 bg-transparent border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => setIsPurchaseDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

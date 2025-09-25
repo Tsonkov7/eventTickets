@@ -33,7 +33,7 @@ const Header: React.FC = () => {
           />
         </Link>
         <Link
-          to="/profile"
+          to="/register"
           className="hidden sm:flex items-center gap-1 hover:text-blue-500 transition-colors"
         >
           <FaUser />
@@ -55,7 +55,7 @@ const Header: React.FC = () => {
 
       <div className="flex items-center">
         <Link
-          to="/profile"
+          to="/register"
           className="sm:hidden flex items-center mr-2 hover:text-blue-500 transition-colors"
         >
           <FaUser />

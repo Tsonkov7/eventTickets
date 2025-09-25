@@ -28,10 +28,7 @@ const EventDetailsPage: React.FC = () => {
   const event = useMemo(() => {
     if (!eventId || !events.length) return null;
 
-    const parsedEventId = parseInt(eventId, 10);
-    if (isNaN(parsedEventId)) return null;
-
-    return events.find((e) => e.id === parsedEventId) || null;
+    return events.find((e) => e._id === eventId) || null;
   }, [eventId, events]);
 
   const handleQuantityChange = useCallback(
