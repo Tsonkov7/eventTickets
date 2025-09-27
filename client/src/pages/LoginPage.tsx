@@ -19,6 +19,13 @@ const LoginPage: React.FC = () => {
 
     setLoading(true);
 
+    // --- DEBUG LOG 1: SEE WHAT THE FRONTEND IS SENDING ---
+    console.log("--- Frontend Log ---");
+    console.log("Attempting to log in with username:", username);
+    console.log("Username length:", username.length); // This can reveal hidden characters
+    console.log("Password length:", password.length);
+    console.log("--------------------");
+
     try {
       const response = await axios.post("http://localhost:3000/auth/login", {
         username,

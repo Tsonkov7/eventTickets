@@ -34,7 +34,9 @@ const RegisterPage: React.FC = () => {
         password,
       });
 
-      setSuccess("Registration successful! You can now log in.");
+      setSuccess(
+        "Registration successful! Please check your email to verify your account."
+      );
       setUsername("");
       setPassword("");
       setConfirmPassword("");
