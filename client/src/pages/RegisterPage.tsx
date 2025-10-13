@@ -68,99 +68,114 @@ const RegisterPage: React.FC = () => {
       <Header />
       <div className="flex min-h-screen items-center justify-center px-2 sm:px-4">
         <form
-          className="w-full max-w-md bg-white rounded-lg shadow-md p-4 sm:p-8 opacity-85 hover:opacity-100 transition-opacity duration-300"
+          className="w-full max-w-md bg-black rounded-lg p-4 sm:p-8 border border-white/40 shadow-lg shadow-white/40 hover:shadow-white/60 transition-all duration-300"
           onSubmit={handleSubmit}
         >
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-800">
-            Register
-          </h2>
-          {/* Display success or error messages */}
-          {error && (
-            <p className="mb-4 text-red-600 bg-red-100 rounded px-3 py-2 text-sm text-center">
-              {error}
-            </p>
-          )}
-          {success && (
-            <p className="mb-4 text-green-600 bg-green-100 rounded px-3 py-2 text-sm text-center">
-              {success}
-            </p>
-          )}
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-gray-700 mb-1 font-medium"
+          <div className="space-y-6">
+            <h2
+              className="text-3xl font-bold text-center text-white"
+              style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.8)" }}
             >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+              Register
+            </h2>
 
-            <label
-              htmlFor="username"
-              className="block text-gray-700 mb-1 font-medium mt-4 sm:mt-2"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+            {/* Display success or error messages */}
+            {error && (
+              <p className="text-red-300 bg-red-900/50 border border-red-500/30 rounded px-3 py-2 text-sm text-center">
+                {error}
+              </p>
+            )}
+            {success && (
+              <p className="text-green-300 bg-green-900/50 border border-green-500/30 rounded px-3 py-2 text-sm text-center">
+                {success}
+              </p>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-gray-300 mb-1 font-medium"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                  className="w-full px-3 py-2 border text-white bg-neutral-900 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-gray-300 mb-1 font-medium"
+                >
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={loading}
+                  className="w-full px-3 py-2 border text-white bg-neutral-900 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-gray-300 mb-1 font-medium"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  className="w-full px-3 py-2 border text-white bg-neutral-900 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-gray-300 mb-1 font-medium"
+                >
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={loading}
+                  className="w-full px-3 py-2 border text-white bg-neutral-900 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all duration-300 disabled:opacity-60 disabled:bg-gray-600 disabled:shadow-none shadow-md shadow-blue-500/40 hover:shadow-lg hover:shadow-blue-500/60"
               disabled={loading}
-              className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-gray-700 mb-1 font-medium"
             >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-              className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+              {loading ? "Registering..." : "Register"}
+            </button>
+
+            <p className="mt-4 text-sm text-center text-gray-400">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-400 hover:underline">
+                Login
+              </Link>
+            </p>
           </div>
-          <div className="mb-6">
-            <label
-              htmlFor="confirmPassword"
-              className="block text-gray-700 mb-1 font-medium"
-            >
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={loading}
-              className="w-full px-3 py-2 text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors duration-200 disabled:opacity-60"
-            disabled={loading}
-          >
-            {loading ? "Registering..." : "Register"}
-          </button>
-          <p className="mt-4 text-sm text-center text-gray-600">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 hover:underline">
-              Login
-            </Link>
-          </p>
         </form>
       </div>
     </>

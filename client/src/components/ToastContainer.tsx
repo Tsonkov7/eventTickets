@@ -18,14 +18,14 @@ const ToastContainer: React.FC<ToastContainerProps> = ({
 
     switch (type) {
       case "success":
-        return `${baseStyles} bg-green-50 border-green-400 text-green-800`;
+        return `${baseStyles} bg-green-100 border-green-400 text-green-800 dark:bg-green-900 dark:border-green-600 dark:text-green-200`;
       case "error":
-        return `${baseStyles} bg-red-50 border-red-400 text-red-800`;
+        return `${baseStyles} bg-red-100 border-red-400 text-red-800 dark:bg-red-900 dark:border-red-600 dark:text-red-200`;
       case "warning":
-        return `${baseStyles} bg-yellow-50 border-yellow-400 text-yellow-800`;
+        return `${baseStyles} bg-yellow-100 border-yellow-500 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-600 dark:text-yellow-200`;
       case "info":
       default:
-        return `${baseStyles} bg-blue-50 border-blue-400 text-blue-800`;
+        return `${baseStyles} bg-blue-100 border-blue-400 text-blue-800 dark:bg-blue-900 dark:border-blue-600 dark:text-blue-200`;
     }
   };
 
@@ -55,7 +55,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({
           className={`${getToastStyles(toast.type)} animate-in slide-in-from-right duration-300`}
         >
           <div className="flex items-center">
-            <span className="mr-2 text-lg font-bold" aria-hidden="true">
+            <span className="mr-2 text-lg font-bold " aria-hidden="true">
               {getIcon(toast.type)}
             </span>
             <span className="flex-1">{toast.message}</span>

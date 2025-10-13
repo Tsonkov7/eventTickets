@@ -143,29 +143,36 @@ const EventDetailsPage: React.FC = () => {
   return (
     <>
       <Header />
-      <main className="mt-8 p-8 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-        <header className="mb-8">
-          <h1 className="text-4xl font-extrabold mb-3 text-gray-900">
+      <main className="mt-4 mb-4 sm:mt-8 p-4 sm:p-6 md:p-8 max-w-lg mx-auto bg-black rounded-lg shadow-lg md:max-w-2xl lg:max-w-4xl border border-white/40 shadow-white/40 hover:shadow-white/60 transition-shadow duration-300">
+        <header className="mb-6 md:mb-8">
+          <h1
+            className="text-3xl sm:text-4xl font-extrabold mb-3 text-white"
+            style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.8)" }}
+          >
             {event.name}
           </h1>
-          <div className="text-sm text-gray-600 mb-4 space-y-1">
+          <div className="text-sm text-gray-300 mb-4 space-y-1">
             <p>
-              <strong>Date:</strong> {event.date}
+              <strong className="text-gray-100">Date:</strong> {event.date}
             </p>
             <p>
-              <strong>Venue:</strong> {event.venue}
+              <strong className="text-gray-100">Venue:</strong> {event.venue}
             </p>
             {event.lineup && event.lineup.length > 0 && (
               <p>
-                <strong>Lineup:</strong> {event.lineup.join(", ")}
+                <strong className="text-gray-100">Lineup:</strong>{" "}
+                {event.lineup.join(", ")}
               </p>
             )}
           </div>
-          <p className="text-gray-700 leading-relaxed">{event.description}</p>
+          <p className="text-gray-300 leading-relaxed">{event.description}</p>
         </header>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-bold border-b pb-2 mb-4">
+          <h2
+            className="text-xl sm:text-2xl font-bold border-b border-gray-700 pb-2 mb-4 text-white"
+            style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.7)" }}
+          >
             Select Your Tickets
           </h2>
           {event.tickets.map((ticket) => (
@@ -179,10 +186,10 @@ const EventDetailsPage: React.FC = () => {
           ))}
         </section>
 
-        <nav className="mt-8 text-center">
+        <nav className="mt-6 md:mt-8 text-center">
           <Link
             to="/"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-2 py-1"
+            className="inline-flex items-center text-blue-400 hover:text-blue-300 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded px-2 py-1"
           >
             <span aria-hidden="true">←</span>
             <span className="ml-1">Back to all events</span>

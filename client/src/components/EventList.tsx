@@ -45,7 +45,7 @@ const EventList: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-white border-b pb-2">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-white">
         Upcoming Events
       </h2>
 
@@ -63,23 +63,32 @@ const EventList: React.FC = () => {
             return (
               <Link
                 to={`/events/${event._id}`}
-                className="no-underline group"
+                className="no-underline group "
                 key={event._id}
               >
-                <div className="relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                  <div className="absolute top-0 right-0 mt-4 mr-4 bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded-full z-10">
+                <div
+                  className="relative mb-3 bg-black rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-white/40
+                shadow-white/40 hover:shadow-white/60"
+                >
+                  <div
+                    className="absolute top-0 right-0 mt-4 mr-4 bg-blue-500 text-white text-sm font-bold py-2 px-4 rounded-full z-10
+                  shadow-lg shadow-blue-500/50"
+                  >
                     From ${startingPrice.toFixed(2)}
                   </div>
                   <img
                     src={event.imageUrl}
                     alt={event.name}
-                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" // Zoom effect on hover
+                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="p-5">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    <h3
+                      className="text-xl font-bold text-white mb-2"
+                      style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.8)" }}
+                    >
                       {event.name}
                     </h3>
-                    <div className="text-md text-gray-700 mb-3">
+                    <div className="text-md text-gray-300 mb-3">
                       <span className="font-medium">
                         {new Date(event.date).toLocaleDateString("en-US", {
                           weekday: "long",
@@ -87,16 +96,27 @@ const EventList: React.FC = () => {
                           day: "numeric",
                         })}
                       </span>
-                      <span className="text-gray-500"> at {event.venue}</span>
+                      <span className="text-gray-400"> at {event.venue}</span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <p
+                      className="text-sm text-gray-300 mb-4"
+                      style={{ textShadow: "0 0 5px rgba(255, 255, 255, 0.5)" }}
+                    >
                       {truncate(event.description, 90)}
                     </p>
-                    <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                      <span className="text-xs font-semibold text-green-700">
-                        {totalTicketsAvailable} Tickets Left
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-700">
+                      <span
+                        className="text-lg font-semibold text-green-300"
+                        style={{
+                          textShadow: "0 0 6px rgba(100, 255, 100, 0.7)",
+                        }}
+                      >
+                        {totalTicketsAvailable > 0 ? `Available` : "Sold Out"}
                       </span>
-                      <span className="inline-block px-4 py-2 text-sm font-semibold text-white bg-blue-500 group-hover:bg-blue-700 rounded-lg transition-colors duration-300">
+                      <span
+                        className="inline-block px-4 py-2 text-sm font-semibold text-white bg-blue-600 group-hover:bg-blue-800 rounded-lg transition-colors duration-300
+                       shadow-md shadow-blue-600/40 hover:shadow-lg hover:shadow-blue-600/60"
+                      >
                         View Details
                       </span>
                     </div>

@@ -83,57 +83,65 @@ const LoginPage: React.FC = () => {
       <div className="flex min-h-screen items-center justify-center px-2 sm:px-4">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-md bg-white rounded-lg shadow-md p-4 sm:p-8 opacity-85 hover:opacity-100 transition-opacity duration-300"
+          className="w-full max-w-md bg-black rounded-lg p-4 sm:p-8 border border-white/40 shadow-lg shadow-white/40 hover:shadow-white/60 transition-all duration-300"
         >
-          <div>
-            <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">
+          <div className="space-y-6">
+            <h2
+              className="text-3xl font-bold text-center text-white"
+              style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.8)" }}
+            >
               Login
             </h2>
-            <label className="block text-gray-700 mb-1 font-medium">
-              Username:
+
+            <div className="space-y-2">
+              <label className="block text-gray-300 mb-1 font-medium">
+                Username:
+              </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
-                className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border text-white bg-neutral-900 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </label>
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1 font-medium">
-              Password:
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-gray-300 mb-1 font-medium">
+                Password:
+              </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border text-white bg-neutral-900 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </label>
-          </div>
-          {error && (
-            <div className="p-2 text-sm text-red-700 bg-red-100 border border-red-300 rounded">
-              {error}
             </div>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
 
-          <p className="mt-4 text-sm text-center text-gray-600">
-            Don't have an account?{" "}
-            <a href="/register" className="text-blue-600 hover:underline">
-              Register
-            </a>
-          </p>
+            {error && (
+              <div className="p-3 text-sm text-red-300 bg-red-900/50 border border-red-500/30 rounded">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all duration-300 shadow-md shadow-blue-500/40 hover:shadow-lg hover:shadow-blue-500/60 disabled:bg-gray-600 disabled:shadow-none"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+
+            <p className="mt-4 text-sm text-center text-gray-400">
+              Don't have an account?{" "}
+              <a href="/register" className="text-blue-400 hover:underline">
+                Register
+              </a>
+            </p>
+          </div>
         </form>
       </div>
-
       <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
     </>
   );
