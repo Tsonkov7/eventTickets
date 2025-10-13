@@ -1,11 +1,13 @@
 import express from "express";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../db/models/user.model.js";
 import { sendVerificationEmail } from "../utils/mailer.js";
+import AuthService from "../services/auth.service.js";
 
 const router = express.Router();
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Register a new user
 router.post("/register", async (req, res) => {
@@ -16,30 +18,34 @@ router.post("/register", async (req, res) => {
       .status(400)
       .json({ message: "Username, password, and email are required" });
   }
+
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(409).json({ message: "Username already exists" });
     }
 
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(409).json({ message: "Email already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(20).toString("hex");
+
     const newUser = new User({
       username,
-      password: hashedPassword,
+      password,
       email,
       verificationToken,
     });
     await newUser.save();
+
     await sendVerificationEmail(newUser.email, newUser.verificationToken);
-    res.status(201).json({ message: "User registered successfully" });
+
+    return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -50,21 +56,19 @@ router.get("/verify/:token", async (req, res) => {
     const user = await User.findOne({ verificationToken: token });
 
     if (!user) {
-      // In a real app, you'd redirect to a frontend page with an error message
       return res
-        .status(400)
-        .send("<h1>Invalid or expired verification token.</h1>");
+        .status(404)
+        .send({ message: "Invalid or expired verification token." });
     }
 
     user.isVerified = true;
     user.verificationToken = undefined; // Remove the token after verification
     await user.save();
-
-    // In a real app, you'd redirect to your frontend's login page
-    res.redirect("http://localhost:5173/login");
+    return res.redirect(`http://localhost:5173/verification`);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("<h1>Server error during verification.</h1>");
+    return res
+      .status(500)
+      .json({ message: "Server error during verification." });
   }
 });
 
@@ -80,7 +84,7 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(404).json({ message: "Invalid credentials" });
     }
 
     if (!user.isVerified) {
@@ -89,32 +93,30 @@ router.post("/login", async (req, res) => {
         .json({ message: "Please verify your email before logging in." });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await AuthService.verifyPassword(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+
     const payload = {
       user: {
         id: user.id,
       },
     };
 
-    if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ message: "JWT secret not configured" });
+    if (!JWT_SECRET) {
+      // Do not tell potential attackers that the JWT_SECRET is not configured :)
+      return res
+        .status(500)
+        .json({ message: "Problem with the Authentication Service" });
     }
 
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+    jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" }, (err, token) => {
+      if (err) throw err;
+      return res.json({ token });
+    });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 });
 

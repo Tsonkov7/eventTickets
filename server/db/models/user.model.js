@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import { DATABASE_MODELS, DATABASE_COLLECTIONS } from "../../constants.js";
-import bcrypt from "bcryptjs";
-import e from "express";
-
+import AuthService from "../../services/auth.service.js";
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -12,7 +10,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     match: [/\S+@\S+\.\S+/, "Please enter a valid email address"],
     minlength: [5, "User email must be at least 5 characters"],
-    maxlength: [100, "User email cannot exceed 100 characters"],
+    maxlength: [254, "User email cannot exceed 254 characters"],
   },
   username: {
     type: String,
@@ -38,14 +36,9 @@ userSchema.pre("save", async function (next) {
     return next();
   }
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await AuthService.hashPassword(this.password);
   next();
 });
 
-const User = mongoose.model(
-  DATABASE_MODELS.USER,
-  userSchema,
-  DATABASE_COLLECTIONS.USER
-);
+const User = mongoose.model(DATABASE_MODELS.USER, userSchema);
 export default User;

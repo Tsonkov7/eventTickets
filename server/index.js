@@ -9,7 +9,9 @@ const PORT = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());
-
+app.use((req, res, next) => {
+  next(); // Pass control to the next function (your router)
+});
 app.use("/", routes);
 
 app.listen(PORT, () => {

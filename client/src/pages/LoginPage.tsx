@@ -1,5 +1,12 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../../constants";
+import { useToast } from "@/hooks/useToast";
+import ToastContainer from "@/components/ToastContainer";
+import { useNavigate, useLocation, useSearchParams } from "react-router";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/features/AuthSlice";
+import Header from "@/components/Header";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -7,6 +14,22 @@ const LoginPage: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { toasts, addToast, removeToast } = useToast();
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const message = searchParams.get("message");
+    if (message === "unauthorized") {
+      setError("You have to log in to proceed.");
+    }
+  }, [searchParams, addToast]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,15 +42,8 @@ const LoginPage: React.FC = () => {
 
     setLoading(true);
 
-    // --- DEBUG LOG 1: SEE WHAT THE FRONTEND IS SENDING ---
-    console.log("--- Frontend Log ---");
-    console.log("Attempting to log in with username:", username);
-    console.log("Username length:", username.length); // This can reveal hidden characters
-    console.log("Password length:", password.length);
-    console.log("--------------------");
-
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         username,
         password,
       });
@@ -35,7 +51,15 @@ const LoginPage: React.FC = () => {
       const { token } = response.data;
       localStorage.setItem("token", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      alert("Login successful!");
+      dispatch(loginSuccess(token));
+      addToast("Login successful!", "success");
+      setUsername("");
+      setPassword("");
+
+      const from = location.state?.from?.pathname || "/profile";
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 1500);
     } catch (error) {
       if (
         axios.isAxiosError(error) &&
@@ -53,33 +77,38 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white rounded shadow-md">
-        <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">
-          Login
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-5">
+    <>
+      <Header />
+
+      <div className="flex min-h-screen items-center justify-center px-2 sm:px-4">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md bg-white rounded-lg shadow-md p-4 sm:p-8 opacity-85 hover:opacity-100 transition-opacity duration-300"
+        >
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">
+              Login
+            </h2>
+            <label className="block text-gray-700 mb-1 font-medium">
               Username:
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
-                className="w-full px-3 py-2 mt-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </label>
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
+            <label className="block text-gray-700 mb-1 font-medium">
               Password:
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className="w-full px-3 py-2 mt-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </label>
           </div>
@@ -95,9 +124,18 @@ const LoginPage: React.FC = () => {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
+
+          <p className="mt-4 text-sm text-center text-gray-600">
+            Don't have an account?{" "}
+            <a href="/register" className="text-blue-600 hover:underline">
+              Register
+            </a>
+          </p>
         </form>
       </div>
-    </div>
+
+      <ToastContainer toasts={toasts} onRemoveToast={removeToast} />
+    </>
   );
 };
 

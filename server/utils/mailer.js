@@ -1,13 +1,11 @@
 import nodemailer from "nodemailer";
+import { API_BASE_URL } from "../constants.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-console.log("Attempting to use Email User:", process.env.EMAIL_USER);
-console.log("Is Email Pass loaded?:", process.env.EMAIL_PASS ? "Yes" : "NO!");
-// Create a "transporter" object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-  service: "gmail", // Use 'gmail' or your email provider
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -15,8 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendVerificationEmail = async (userEmail, token) => {
-  // IMPORTANT: Use your actual frontend URL here
-  const verificationUrl = `http://localhost:3000/auth/verify/${token}`;
+  const verificationUrl = `${API_BASE_URL}/auth/verify/${token}`;
 
   const mailOptions = {
     from: `"Your App Name" <${process.env.EMAIL_USER}>`,

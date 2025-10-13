@@ -2,14 +2,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
-:root {
+body {
   font-family: "Goldman", "Orbitron", "Roboto", "Segoe UI", Arial, sans-serif;
   line-height: 2.5;
   font-weight: 500;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+  background-image: url("/images/blackhole.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #f0f0f0;
 }

@@ -7,9 +7,11 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const events = await DbService.getMany(DATABASE_COLLECTIONS.EVENT, {});
-    res.json(events);
+    return res.json(events);
   } catch (err) {
-    res.status(500).json({ error: "Could not fetch events from database" });
+    return res
+      .status(500)
+      .json({ error: "Could not fetch events from database" });
   }
 });
 

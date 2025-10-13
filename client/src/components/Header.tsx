@@ -16,6 +16,7 @@ const Header: React.FC = () => {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     navigate("/");
   };
 
@@ -33,7 +34,7 @@ const Header: React.FC = () => {
           />
         </Link>
         <Link
-          to="/register"
+          to="/profile"
           className="hidden sm:flex items-center gap-1 hover:text-blue-500 transition-colors"
         >
           <FaUser />
@@ -55,7 +56,7 @@ const Header: React.FC = () => {
 
       <div className="flex items-center">
         <Link
-          to="/register"
+          to="/profile"
           className="sm:hidden flex items-center mr-2 hover:text-blue-500 transition-colors"
         >
           <FaUser />

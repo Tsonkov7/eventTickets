@@ -6,6 +6,7 @@ import {
 import type { RootState } from "./store";
 import axios from "axios";
 import type { CartItem } from "./CartSlice";
+import { API_BASE_URL } from "../../constants";
 
 export interface Ticket {
   type: string;
@@ -39,7 +40,7 @@ const initialState: EventState = {
 };
 
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
-  const response = await axios.get("http://localhost:3000/data");
+  const response = await axios.get(`${API_BASE_URL}/data`);
   return response.data;
 });
 
