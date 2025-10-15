@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
       <div className="flex min-h-screen items-center justify-center px-2 sm:px-4">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-md bg-black rounded-lg p-4 sm:p-8 border border-white/40 shadow-lg shadow-white/40 hover:shadow-white/60 transition-all duration-300"
+          className="w-full max-w-md bg-black/30 backdrop-blur-sm rounded-lg p-4 sm:p-8 border border-white/40 shadow-lg shadow-white/40 hover:shadow-white/60 transition-all duration-300"
         >
           <div className="space-y-6">
             <h2

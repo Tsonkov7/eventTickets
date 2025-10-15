@@ -67,7 +67,7 @@ const EventList: React.FC = () => {
                 key={event._id}
               >
                 <div
-                  className="relative mb-3 bg-black rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-white/40
+                  className="relative mb-3 bg-black/30 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-white/40
                 shadow-white/40 hover:shadow-white/60"
                 >
                   <div

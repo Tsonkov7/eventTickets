@@ -18,14 +18,14 @@ const ToastContainer: React.FC<ToastContainerProps> = ({
 
     switch (type) {
       case "success":
-        return `${baseStyles} bg-green-100 border-green-400 text-green-800 dark:bg-green-900 dark:border-green-600 dark:text-green-200`;
+        return `${baseStyles} bg-green/80 backdrop-blur-sm border-green-400 text-green-500 `;
       case "error":
-        return `${baseStyles} bg-red-100 border-red-400 text-red-800 dark:bg-red-900 dark:border-red-600 dark:text-red-200`;
+        return `${baseStyles} bg-red/80 backdrop-blur-sm border-red-400 text-red-500 `;
       case "warning":
-        return `${baseStyles} bg-yellow-100 border-yellow-500 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-600 dark:text-yellow-200`;
+        return `${baseStyles} bg-yellow/80 backdrop-blur-sm border-yellow-500 text-yellow-500 `;
       case "info":
       default:
-        return `${baseStyles} bg-blue-100 border-blue-400 text-blue-800 dark:bg-blue-900 dark:border-blue-600 dark:text-blue-200`;
+        return `${baseStyles} bg-blue/80 backdrop-blur-sm border-blue-400 text-blue-500 `;
     }
   };
 

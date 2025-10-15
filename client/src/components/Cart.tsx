@@ -85,7 +85,7 @@ const Cart: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-2xl mx-auto p-8 bg-black rounded-xl shadow-lg mt-10 border border-white/40 shadow-white/40 hover:shadow-white/60 transition-shadow duration-300">
+      <div className="max-w-2xl mx-auto p-8 bg-black/30 backdrop-blur-sm rounded-xl shadow-lg mt-10 border border-white/40 shadow-white/40 hover:shadow-white/60 transition-shadow duration-300">
         <div className="p-6 sm:p-8">
           {/* --- Header --- */}
           <div className="flex justify-between items-baseline border-b border-gray-700 pb-4 mb-6">

@@ -143,7 +143,7 @@ const EventDetailsPage: React.FC = () => {
   return (
     <>
       <Header />
-      <main className="mt-4 mb-4 sm:mt-8 p-4 sm:p-6 md:p-8 max-w-lg mx-auto bg-black rounded-lg shadow-lg md:max-w-2xl lg:max-w-4xl border border-white/40 shadow-white/40 hover:shadow-white/60 transition-shadow duration-300">
+      <main className="mt-4 mb-4 sm:mt-8 p-4 sm:p-6 md:p-8 max-w-lg mx-auto bg-black/30 backdrop-blur-sm rounded-lg shadow-lg md:max-w-2xl lg:max-w-4xl border border-white/40 shadow-white/40 hover:shadow-white/60 transition-shadow duration-300">
         <header className="mb-6 md:mb-8">
           <h1
             className="text-3xl sm:text-4xl font-extrabold mb-3 text-white"
