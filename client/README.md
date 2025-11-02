@@ -25,3 +25,32 @@ Tools - Nodemailer, Dotenv
 # Running Locally
 
 Follow these steps to get the project running on your local machine.
+
+1. git clone https://github.com/Tsonkov7/eventTickets
+   cd eventTickets
+
+2. cd server
+   npm install
+   cd ../client
+   npm install
+
+3. server/.env
+   PORT=3000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_super_secret_key
+   EMAIL_USER=your_gmail_address
+   EMAIL_PASS=your_16_character_gmail_app_password
+   FRONTEND_URL=http://localhost:5173
+
+4. Run the Application\*\*
+   You'll need two separate terminals for this.
+
+- **Start the Backend Server** (from the `/server` directory):
+  ````bash
+  nodemon index.js
+  ```*   **Start the Frontend Client** (from the `/client` directory):
+  ```bash
+  npm run dev
+  ````
+
+The application will be available at `http://localhost:5173`.
