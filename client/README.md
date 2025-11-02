@@ -1,43 +1,27 @@
-# Event Tickets Client
+# EventTickets - Full-Stack Ticketing App
 
-## Overview
-A client application for managing event tickets.
+A full-stack MERN application featuring a complete and secure user authentication system. Built with TypeScript, this project serves as a robust foundation for a modern web application.
+![homepage-screenshot](public/images/homepage-screenshot.png)
 
-## Installation
-```bash
-npm install
-```
+# Features
 
-## Usage
-```bash
-npm start
-```
+-Secure User Authentication:
+-JWT-based login and session management.
+-Password hashing using bcryptjs.
+-Account activation via email verification with Nodemailer.
+-Protected Routes: Both frontend pages (like /profile) and backend API endpoints are protected, redirecting unauthorized users.
+-Centralized State Management: Uses Redux Toolkit for a predictable and scalable state container.
+-RESTful API: A well-structured backend API built with Express.js and Mongoose.
+-Type-Safe Code: Built with TypeScript for a more maintainable and robust codebase.
 
-## Project Structure
-```
-client/
-├── src/
-├── public/
-├── package.json
-└── README.md
-```
+# Technology Stack
 
-## Features
-- Event ticket management
-- User interface for ticket operations
-- [Add specific features based on your implementation]
+Frontend - React, TypeScript, Redux Toolkit, React Router, Axios, Tailwind CSS
+Backend - Node.js, Express.js
+Database - MongoDB, Mongoose
+Authentication - JSON Web Tokens (JWT), bcryptjs
+Tools - Nodemailer, Dotenv
 
-## Technologies Used
-- [List your tech stack - React, Vue, Angular, etc.]
-- [Database technology if applicable]
-- [Other dependencies]
+# Running Locally
 
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-[Add your license information]
+Follow these steps to get the project running on your local machine.

@@ -6,7 +6,7 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Header />
-      <Intro />s
+      <Intro />
       <EventList />
     </>
   );

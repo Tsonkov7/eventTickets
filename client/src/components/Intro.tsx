@@ -3,7 +3,7 @@ import rpLogoUrl from "../assets/rp-logo.svg";
 
 const Intro: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-transparent to-black text-white text-center   p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen peer-focus:opacity-0 bg-gradient-to-b from-transparent to-black text-white text-center   p-4">
       <img
         src={rpLogoUrl}
         alt="RP Logo"
