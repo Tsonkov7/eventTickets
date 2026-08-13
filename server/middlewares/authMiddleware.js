@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
 import User from "../db/models/user.model.js";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
 const protect = async (req, res, next) => {
   let token;
+  const jwtSecret = process.env.JWT_SECRET;
 
   if (
     req.headers.authorization &&
@@ -12,13 +11,13 @@ const protect = async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1];
-      if (!JWT_SECRET) {
+      if (!jwtSecret) {
         return res
           .status(500)
           .json({ message: "Server error: JWT secret not configured." });
       }
 
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, jwtSecret);
 
       req.user = await User.findById(decoded.user.id).select("-password");
 

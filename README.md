@@ -6,7 +6,12 @@
 
 ## Live demo
 
-Deploy the backend (Render/Fly/Railway) and frontend (Vercel/Netlify), then add your URLs here.
+| App | URL |
+|-----|-----|
+| Frontend | _Deploy with Vercel — set root directory to `client`_ |
+| Backend | _Deploy with Render — uses `render.yaml` at repo root_ |
+
+After deploying, update `FRONTEND_URL` / `SERVER_URL` on the backend and `VITE_API_BASE_URL` on the frontend so auth redirects and API calls work across environments.
 
 ## Features
 
@@ -102,17 +107,20 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ## Deployment
 
-### Backend (Render / Fly / Railway)
+### Backend (Render)
 
-1. Set all `server/.env` variables in the host dashboard.
-2. Start command: `node index.js`
-3. Ensure `FRONTEND_URL` points to your deployed client.
+This repo includes a [`render.yaml`](render.yaml) Blueprint. On [Render](https://render.com):
 
-### Frontend (Vercel / Netlify)
+1. **New → Blueprint** → connect this repo.
+2. Set secret env vars: `MONGODB_CONNECTION_STRING`, `EMAIL_USER`, `EMAIL_PASS`, `STRIPE_SECRET_KEY`, `FRONTEND_URL`, `SERVER_URL`.
+3. After deploy, run the seed once from the Render shell: `node scripts/seed.js`.
 
-1. Set `VITE_API_BASE_URL` to your deployed API URL.
-2. Set `VITE_STRIPE_PUBLISHABLE_KEY`.
-3. Build command: `npm run build`, output: `dist`.
+### Frontend (Vercel)
+
+1. Import the repo on [Vercel](https://vercel.com).
+2. Set **Root Directory** to `client`.
+3. Add env vars: `VITE_API_BASE_URL` (your Render API URL), `VITE_STRIPE_PUBLISHABLE_KEY`.
+4. Deploy — `vercel.json` handles SPA routing.
 
 ## API overview
 

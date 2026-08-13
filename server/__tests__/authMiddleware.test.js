@@ -1,6 +1,5 @@
 import { jest } from "@jest/globals";
 import jwt from "jsonwebtoken";
-import { protect } from "../middlewares/authMiddleware.js";
 
 jest.unstable_mockModule("../db/models/user.model.js", () => ({
   default: {
@@ -8,6 +7,7 @@ jest.unstable_mockModule("../db/models/user.model.js", () => ({
   },
 }));
 
+const { protect } = await import("../middlewares/authMiddleware.js");
 const User = (await import("../db/models/user.model.js")).default;
 
 describe("protect middleware", () => {
@@ -39,8 +39,15 @@ describe("protect middleware", () => {
 
   it("calls next when token is valid", async () => {
     const token = jwt.sign({ user: { id: "user123" } }, "test-secret");
-    const mockUser = { _id: "user123", username: "testuser", email: "test@test.com" };
-    User.findById.mockResolvedValue(mockUser);
+    const mockUser = {
+      _id: "user123",
+      username: "testuser",
+      email: "test@test.com",
+    };
+
+    User.findById.mockReturnValue({
+      select: jest.fn().mockResolvedValue(mockUser),
+    });
 
     const req = { headers: { authorization: `Bearer ${token}` } };
     const res = mockRes();
