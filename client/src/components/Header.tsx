@@ -1,13 +1,17 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaSearch, FaUser } from "react-icons/fa";
+import { FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
 import CartIcon from "./CartIcon";
 import { useAppDispatch, useAppSelector } from "../features/store.hooks";
 import { setSearchTerm, selectSearchTerm } from "../features/EventSlice";
+import { selectAuth, logout } from "../features/AuthSlice";
+import { setAuthToken } from "../lib/api";
 import rpLogoUrl from "../assets/rp-logo.svg";
+
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
   const searchTerm = useAppSelector(selectSearchTerm);
+  const isLoggedIn = useAppSelector(selectAuth);
   const navigate = useNavigate();
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,8 +20,14 @@ const Header: React.FC = () => {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     navigate("/");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setAuthToken(null);
+    dispatch(logout());
+    navigate("/login");
   };
 
   return (
@@ -35,10 +45,20 @@ const Header: React.FC = () => {
         </Link>
         <Link
           to="/profile"
-          className="text-2xl hidden sm:flex  items-center gap-1 hover:text-gray-500 transition-colors "
+          className="text-2xl hidden sm:flex items-center gap-1 hover:text-gray-500 transition-colors"
         >
           <FaUser />
         </Link>
+        {isLoggedIn && (
+          <button
+            type="button"
+            onClick={handleLogout}
+            aria-label="Log out"
+            className="text-xl hidden sm:flex items-center gap-1 hover:text-red-400 transition-colors"
+          >
+            <FaSignOutAlt />
+          </button>
+        )}
       </nav>
 
       <div className="flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto absolute left-1/2 transform -translate-x-1/2  ">

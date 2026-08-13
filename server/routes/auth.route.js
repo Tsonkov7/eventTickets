@@ -64,7 +64,8 @@ router.get("/verify/:token", async (req, res) => {
     user.isVerified = true;
     user.verificationToken = undefined; // Remove the token after verification
     await user.save();
-    return res.redirect(`http://localhost:5173/verification`);
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    return res.redirect(`${frontendUrl}/verification`);
   } catch (err) {
     return res
       .status(500)

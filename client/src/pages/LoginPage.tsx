@@ -1,6 +1,5 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { API_BASE_URL } from "../../constants";
+import { api, setAuthToken } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
 import ToastContainer from "@/components/ToastContainer";
 import { useNavigate, useLocation, useSearchParams } from "react-router";
@@ -43,14 +42,14 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+      const response = await api.post("/auth/login", {
         username,
         password,
       });
 
       const { token } = response.data;
       localStorage.setItem("token", token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      setAuthToken(token);
       dispatch(loginSuccess(token));
       addToast("Login successful!", "success");
       setUsername("");
@@ -62,12 +61,17 @@ const LoginPage: React.FC = () => {
       }, 1500);
     } catch (error) {
       if (
-        axios.isAxiosError(error) &&
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
         error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response &&
         error.response.data &&
-        error.response.data.message
+        typeof error.response.data === "object" &&
+        "message" in error.response.data
       ) {
-        setError(error.response.data.message);
+        setError(String(error.response.data.message));
       } else {
         setError("An error occurred during login");
       }
@@ -86,10 +90,7 @@ const LoginPage: React.FC = () => {
           className="w-full max-w-md bg-black/30 backdrop-blur-sm rounded-lg p-4 sm:p-8 border border-white/40 shadow-lg shadow-white/40 hover:shadow-white/60 transition-all duration-300"
         >
           <div className="space-y-6">
-            <h2
-              className="text-3xl font-bold text-center text-white"
-              style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.8)" }}
-            >
+            <h2 className="text-3xl font-bold text-center text-white glow-text">
               Login
             </h2>
 

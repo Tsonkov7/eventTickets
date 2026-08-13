@@ -17,6 +17,10 @@ const authSlice = createSlice({
       state.isLoggedIn = true;
       state.token = action.payload;
     },
+    rehydrate: (state, action: PayloadAction<string>) => {
+      state.isLoggedIn = true;
+      state.token = action.payload;
+    },
     logout: (state) => {
       state.isLoggedIn = false;
       state.token = null;
@@ -24,7 +28,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
+export const { loginSuccess, rehydrate, logout } = authSlice.actions;
 
 export const selectAuth = (state: RootState) => state.auth.isLoggedIn;
 

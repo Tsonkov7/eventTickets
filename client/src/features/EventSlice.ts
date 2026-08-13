@@ -4,9 +4,7 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import axios from "axios";
-import type { CartItem } from "./CartSlice";
-import { API_BASE_URL } from "../../constants";
+import { api } from "@/lib/api";
 
 export interface Ticket {
   type: string;
@@ -40,7 +38,7 @@ const initialState: EventState = {
 };
 
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async () => {
-  const response = await axios.get(`${API_BASE_URL}/data`);
+  const response = await api.get("/data");
   return response.data;
 });
 
@@ -50,25 +48,6 @@ const eventSlice = createSlice({
   reducers: {
     setSearchTerm: (state, action: PayloadAction<string>) => {
       state.searchTerm = action.payload;
-    },
-    purchaseTickets: (state, action: PayloadAction<CartItem[]>) => {
-      const purchasedItems = action.payload;
-
-      purchasedItems.forEach((cartItem) => {
-        const eventToUpdate = state.events.find(
-          (event) => event._id === cartItem.eventId
-        );
-
-        if (eventToUpdate) {
-          const ticketToUpdate = eventToUpdate.tickets.find(
-            (ticket) => ticket.type === cartItem.ticketType
-          );
-
-          if (ticketToUpdate) {
-            ticketToUpdate.ticketsAvailable -= cartItem.quantity;
-          }
-        }
-      });
     },
   },
   extraReducers: (builder) => {
@@ -87,7 +66,7 @@ const eventSlice = createSlice({
       });
   },
 });
-export const { setSearchTerm, purchaseTickets } = eventSlice.actions;
+export const { setSearchTerm } = eventSlice.actions;
 
 export const selectEvents = (state: RootState) => state.events.events;
 export const selectSearchTerm = (state: RootState) => state.events.searchTerm;

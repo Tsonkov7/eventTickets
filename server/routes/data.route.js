@@ -1,12 +1,11 @@
 import express from "express";
-import DbService from "../services/db.service.js";
-import { DATABASE_COLLECTIONS } from "../constants.js";
+import Event from "../db/models/event.model.js";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const events = await DbService.getMany(DATABASE_COLLECTIONS.EVENT, {});
+    const events = await Event.find({}).lean();
     return res.json(events);
   } catch (err) {
     return res

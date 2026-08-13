@@ -15,3 +15,7 @@ body {
   background-attachment: fixed;
   color: #f0f0f0;
 }
+
+.glow-text {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}

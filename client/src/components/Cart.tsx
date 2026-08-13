@@ -10,7 +10,6 @@ import {
   clearCart,
 } from "../features/CartSlice";
 import type { CartItem } from "../features/CartSlice";
-import { purchaseTickets } from "../features/EventSlice";
 import { Link } from "react-router-dom";
 import ToastContainer from "./ToastContainer";
 import { useToast } from "../hooks/useToast";
@@ -33,8 +32,6 @@ const Cart: React.FC = () => {
 
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [itemToRemove, setItemToRemove] = useState<CartItem | null>(null);
-
-  const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
 
   const handleIncrement = (item: CartItem) => {
     dispatch(
@@ -65,21 +62,6 @@ const Cart: React.FC = () => {
       setItemToRemove(null);
       setIsRemoveDialogOpen(false);
     }
-  };
-
-  const openPurchaseDialog = () => {
-    if (cartItems.length === 0) {
-      addToast("Your cart is empty!", "error");
-      return;
-    }
-    setIsPurchaseDialogOpen(true);
-  };
-
-  const confirmPurchase = () => {
-    dispatch(purchaseTickets(cartItems));
-    dispatch(clearCart());
-    addToast("Purchase successful! Thank you for your order.", "success");
-    setIsPurchaseDialogOpen(false);
   };
 
   return (
@@ -205,12 +187,6 @@ const Cart: React.FC = () => {
 
               {/* --- Footer Actions --- */}
               <div className="border-t border-gray-700 pt-6 mt-6">
-                <button
-                  onClick={openPurchaseDialog}
-                  className="w-full bg-blue-600 text-white font-semibold text-lg rounded-lg hover:bg-blue-700 transition py-3 shadow-md shadow-blue-500/40 hover:shadow-lg hover:shadow-blue-500/60 disabled:bg-gray-600 disabled:shadow-none"
-                >
-                  Proceed to Checkout
-                </button>
                 <div className="mt-4 flex justify-center text-center text-sm">
                   <button
                     onClick={() => dispatch(clearCart())}
@@ -228,7 +204,7 @@ const Cart: React.FC = () => {
 
       {/* --- Item Removal Confirmation Dialog --- */}
       <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
-        <DialogContent className="bg-black rounded-lg shadow-xl border border-white/40 shadow-lg shadow-white/40 transition-shadow duration-300">
+        <DialogContent className="bg-black rounded-lg shadow-xl border border-white/40  shadow-white/40 transition-shadow duration-300">
           <DialogHeader className="p-6">
             <DialogTitle
               className="text-xl font-semibold text-white"
@@ -255,41 +231,6 @@ const Cart: React.FC = () => {
               onClick={confirmRemove}
             >
               Remove
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* --- Purchase Confirmation Dialog --- */}
-      <Dialog
-        open={isPurchaseDialogOpen}
-        onOpenChange={setIsPurchaseDialogOpen}
-      >
-        <DialogContent className="bg-black rounded-lg shadow-xl border border-white/40 shadow-lg shadow-white/40 transition-shadow duration-300">
-          <DialogHeader className="p-6">
-            <DialogTitle
-              className="text-xl font-semibold text-white"
-              style={{ textShadow: "0 0 8px rgba(255, 255, 255, 0.7)" }}
-            >
-              Confirm Purchase
-            </DialogTitle>
-            <DialogDescription className="mt-2 text-sm text-gray-400">
-              {`You are about to purchase tickets for a total of $${totalPrice.toFixed(2)}. Proceed with this order?`}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex justify-end space-x-4 p-6 bg-gray-900/50 border-t border-gray-700 rounded-b-lg">
-            <Button
-              variant="outline"
-              className="px-4 py-2 bg-gray-700 border border-gray-600 text-gray-300 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-gray-500 transition-colors"
-              onClick={() => setIsPurchaseDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-blue-500 shadow-md shadow-blue-500/40 hover:shadow-lg hover:shadow-blue-500/60 transition-all duration-300"
-              onClick={confirmPurchase}
-            >
-              Confirm Purchase
             </Button>
           </DialogFooter>
         </DialogContent>
